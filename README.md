@@ -69,18 +69,14 @@ Uninstall mode: packaged Uninstall.xml (unless -XMLUrl is provided)
 - Select the .intunewin you created.
 - Use the following install/uninstall commands:
 
-- Install using packaged Configuration.xml:
-  powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Install
+- Install using packaged Configuration.xml: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Install
 
-- Uninstall using packaged Uninstall.xml:
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Uninstall
+- Uninstall using packaged Uninstall.xml: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Uninstall
 
   
-- Install using remote configuration XML:
-  powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -XMLUrl "https://yourdomain.com/office/Configuration.xml"
+- Install using remote configuration XML: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -XMLUrl "https://yourdomain.com/office/Configuration.xml"
 
-- Uninstall using remote Uninstall XML:
-  powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Uninstall -XMLUrl "https://yourdomain.com/office/Uninstall.xml"
+- Uninstall using remote Uninstall XML: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Uninstall -XMLUrl "https://yourdomain.com/office/Uninstall.xml"
 
 
 
