@@ -71,27 +71,34 @@ This Script:
 .\IntuneWinAppUtil.exe -c "C:\SourceFolder" -s "Install-M365-Apps.ps1" -o "C:\OutputFolder"
 
 ---
+
 ## Create a Win32 App in Intune
 
 1. Go to Microsoft Intune Admin Center → Apps → Windows → Add.
 2. Choose App type: Win32 app and upload the .intunewin file.
 3. Use the following install/uninstall commands:
 
+## Install using the current .xml files include in the package
+
 - Install (using packaged Configuration.xml): powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Install
 - Uninstall (using packaged Uninstall.xml): powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Uninstall
 
 ---
 
+## Install using a remote .xml files include in the package (Optional)
+
 - Install (using remote Configuration.xml): powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -XMLUrl "https://yourdomain.com/office/Configuration.xml"
 - Uninstall (using remote Uninstall.xml): powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Uninstall -XMLUrl "https://yourdomain.com/office/Uninstall.xml"
 
 ---
+
 ## Detection Rules
 
 - Use the PowerShell detection script (no version check required).
 - Supports AMD64 and ARM64 architectures.
 
 ---
+
 ## Logging and Troubleshooting
 
 - Script log: C:\Windows\Temp\M365-Apps-Setup.log
