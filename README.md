@@ -22,7 +22,7 @@ It is strongly recommended to **validate and test** both the script and the conf
 
 ## Description
 
-This solution:  
+This Script:  
 - Downloads the latest Office Click-to-Run `setup.exe` version from the Microsoft CDN (tiny package).  
 - Supports **Install** and **Uninstall** modes (default = Install).  
 - Uses **Configuration.xml** for install and **Uninstall.xml** for removal (packaged by default).  
