@@ -63,10 +63,9 @@ This Script:
 
 1. Download the [Intune Win32 Content Prep Tool](https://github.com/microsoft/Microsoft-Win32-Content-Prep-Tool/raw/refs/heads/master/IntuneWinAppUtil.exe).  
 2. Place all required files in the same source folder:  
-Install-M365-Apps.ps1
-Install.xml
-Configuration.xml
-Uninstall.xml
+- Install-M365-Apps.ps1
+- Configuration.xml
+- Uninstall.xml
 
 3. Run the following powershell command to generate a .intunewin package:  
 .\IntuneWinAppUtil.exe -c "C:\SourceFolder" -s "Install-M365-Apps.ps1" -o "C:\OutputFolder"
