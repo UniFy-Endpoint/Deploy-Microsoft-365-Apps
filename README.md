@@ -81,7 +81,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 
 
 
 #Detection rules (Custom script)
-Use the PowerShell detection script (no version check; supports AMD64 + ARM64).
+Use the PowerShell detection script (no version check; supports AMD64 + ARM64)
 
 
 
