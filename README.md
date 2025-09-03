@@ -5,15 +5,16 @@
 Deploy Microsoft 365 Apps for Enterprise or Microsoft 365 Apps for Business from Intune as a Win32 App. (Optimized for Autopilot ESP).
 
 It is not required to package the script and the .xml configuration files into an .intunewin file each time before using the package.
-The file located in the (Package) folder has already been packaged and can be used directly as a Win32 App to configure and install Microsoft 365 Apps.
-
-A new .intunewin file should only be created if modifications are made to the .xml files or if a new configuration file is required.
-
-It is strongly recommended to validate and test both the script and the configuration in a controlled test environment prior to deploying them in a production environment.
+The file located in the (Package) folder has already been packaged and can be used directly as a Win32 App to configure and install Microsoft 365 Apps. A new .intunewin file should only be created if modifications are made to the .xml files or if a new configuration file is required.
 
 
+#Important Notice
 
-#DESCRIPTION
+It is recommended to validate and test both the script and the configuration in a controlled test environment prior to deploying them in a production environment.
+
+
+
+#Description
 
   - Downloads the latest Office Click-to-Run setup.exe version from Microsoft CDN (tiny package).
   - Supports Install and Uninstall modes (default: Install).
