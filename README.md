@@ -101,6 +101,6 @@ This Script:
 
 ## Logging and Troubleshooting
 
-- Script log: C:\Windows\Temp\M365-Apps-Setup.log
+- Script logs: C:\Windows\Temp\M365-Apps-Setup.log
 - Office Click-to-Run logs: C:\ProgramData\Microsoft\Office\ClickToRun\Log
 - Common causes of failure: Network egress blocked to officecdn.microsoft.com or the provided XML URL is unreachable or invalid.
