@@ -61,23 +61,18 @@ This solution:
 ## How It Works
 
 1. The script creates a temporary folder: C:\Windows\Temp\OfficeSetup
-2. 2. Downloads `setup.exe` from:  
-https://officecdn.microsoft.com/pr/wsus/setup.exe
-
+2. Downloads `setup.exe` from: https://officecdn.microsoft.com/pr/wsus/setup.exe
 3. Verifies that `setup.exe` is signed by Microsoft.  
 4. Selects an XML option:  
 - **Install mode**: uses packaged `Configuration.xml` (or downloads via `-XMLUrl`)  
 - **Uninstall mode**: uses packaged `Uninstall.xml` (or downloads via `-XMLUrl`)  
-5. Runs:  
-setup.exe /configure "configuration.xml"
-
-6. Cleans up and returns the `setup.exe` exit code to Intune.  
+5. Cleans up and returns the `setup.exe` exit code to Intune.  
 
 **Note:** You do not need to pass the XML path in the Intune command line. The script automatically copies/renames the chosen XML to `configuration.xml` in the temp folder.  
 
 ---
 
-## Create a .intunewin Package
+## Create a .intunewin Package (Optional)
 
 1. Download the [Intune Win32 Content Prep Tool](https://github.com/microsoft/Microsoft-Win32-Content-Prep-Tool/raw/refs/heads/master/IntuneWinAppUtil.exe).  
 2. Place all required files in the same source folder:  
