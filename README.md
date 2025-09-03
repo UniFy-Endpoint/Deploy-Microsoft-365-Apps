@@ -31,11 +31,15 @@ Works on AMD64 and ARM64 Windows
 #How It Works
 
 - The Script creates a temp work folder (C:\Windows\Temp\OfficeSetup). Downloads setup.exe from the Microsoft URL: https://officecdn.microsoft.com/pr/wsus/setup.exe
+  
 - Verifies that setup.exe is signed by Microsoft.
+  
 - Selects the XML option to use (If -XMLUrl is provided, the XML is downloaded to the temp folder):
 Install mode: packaged Configuration.xml (unless -XMLUrl is provided)
 Uninstall mode: packaged Uninstall.xml (unless -XMLUrl is provided)
+
 - Runs: setup.exe /configure "\configuration.xml"
+  
 - Cleans up and returns the setup.exe exit code to Intune.
 
 Note: You don’t need to pass the XML path on the Intune command line. The script handles this internally and copies/renames the chosen XML to configuration.xml in the temp folder.
