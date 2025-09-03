@@ -85,7 +85,7 @@ This Script:
 
 ---
 
-## Install using a remote .xml files include in the package (Optional)
+## Install using remote .xml files (Optional)
 
 - Install (using remote Configuration.xml): powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -XMLUrl "https://yourdomain.com/office/Configuration.xml"
 - Uninstall (using remote Uninstall.xml): powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Uninstall -XMLUrl "https://yourdomain.com/office/Uninstall.xml"
