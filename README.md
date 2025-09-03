@@ -7,7 +7,7 @@ Deploy Microsoft 365 Apps for Enterprise or Microsoft 365 Apps for Business from
 
 #DESCRIPTION
 
-  - Downloads the latest Office Click-to-Run setup.exe from Microsoft CDN (tiny package).
+  - Downloads the latest Office Click-to-Run setup.exe version from Microsoft CDN (tiny package).
   - Supports Install and Uninstall modes (default: Install).
   - Uses packaged Configuration.xml for install and packaged Uninstall.xml for removal.
   - Optionally accepts -XMLUrl to fetch a remote XML for either mode.
@@ -19,14 +19,14 @@ Deploy Microsoft 365 Apps for Enterprise or Microsoft 365 Apps for Business from
 
 #Key Features
 
-Optimized for Autopilot ESP: tiny package, streams bits from Microsoft CDN
-Install and Uninstall support via a single script (Mode parameter)
-Optional -XMLUrl to fetch XML from a remote location
-Uses packaged Configuration.xml for install and Uninstall.xml for removal by default
-Closes all Microsoft 365 apps before Uninstall; removes ProofingTools
-Verifies Microsoft signature on setup.exe
-Cleans up temp files and surfaces proper exit codes for Intune
-Works on AMD64 and ARM64 Windows
+- Optimized for Autopilot ESP: tiny package, streams bits from Microsoft CDN
+- Install and Uninstall support via a single script (Mode parameter)
+- Optional -XMLUrl to fetch XML from a remote location
+- Uses packaged Configuration.xml for install and Uninstall.xml for removal by default
+- Closes all Microsoft 365 apps before Uninstall; removes ProofingTools
+- Verifies Microsoft signature on setup.exe
+- Cleans up temp files and surfaces proper exit codes for Intune
+- Works on AMD64 and ARM64 Windows
 
 
 
