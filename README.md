@@ -1,102 +1,116 @@
-# Deploy-Microsoft-365-Apps
+# Deploy Microsoft 365 Apps with Intune (Win32 App)
 
-#Overview
+## Table of Contents
+- [Overview](#overview)  
+- [Important Notice](#important-notice)  
+- [Description](#description)  
+- [Key Features](#key-features)  
+- [How It Works](#how-it-works)  
+- [Create a .intunewin Package](#create-a-intunewin-package)  
+- [Create the Win32 App in Intune](#create-the-win32-app-in-intune)  
+  - [Installation](#installation)  
+  - [Uninstallation](#uninstallation)  
+- [Detection Rules](#detection-rules)  
+- [Logging and Troubleshooting](#logging-and-troubleshooting)  
 
-Deploy Microsoft 365 Apps for Enterprise or Microsoft 365 Apps for Business from Intune as a Win32 App. (Optimized for Autopilot ESP).
+---
 
-It is not required to package the script and the .xml configuration files into an .intunewin file each time before using the package.
-The file located in the (Package) folder has already been packaged and can be used directly as a Win32 App to configure and install Microsoft 365 Apps. A new .intunewin file should only be created if modifications are made to the .xml files or if a new configuration file is required.
+## Overview
 
+Deploy **Microsoft 365 Apps for Enterprise** or **Microsoft 365 Apps for Business** from **Intune** as a Win32 App (optimized for Autopilot ESP).  
 
-#Important Notice
+You do **not** need to package the script and the `.xml` configuration files into an `.intunewin` file every time. The file located in the **Package** folder is already packaged and can be used directly as a Win32 App to configure and install Microsoft 365 Apps.  
 
-It is recommended to validate and test both the script and the configuration in a controlled test environment prior to deploying them in a production environment.
+A new `.intunewin` file should only be created if:  
+- Modifications are made to the `.xml` files, or  
+- A new configuration file is required.  
 
+---
 
+## Important Notice
 
-#Description
+It is strongly recommended to **validate and test** both the script and the configuration in a **controlled test environment** before deploying in production.  
 
-  - Downloads the latest Office Click-to-Run setup.exe version from Microsoft CDN (tiny package).
-  - Supports Install and Uninstall modes (default: Install).
-  - Uses packaged Configuration.xml for install and packaged Uninstall.xml for removal.
-  - Optionally accepts -XMLUrl to fetch a remote XML for either mode.
-  - Verifies Microsoft signature on setup.exe.
-  - Closes Microsoft 365 apps before Uninstall and removes ProofingTools.
-  - Cleans up after completion and returns proper exit codes for Intune.
+---
 
+## Description
 
+This solution:  
+- Downloads the latest Office Click-to-Run `setup.exe` version from the Microsoft CDN (tiny package).  
+- Supports **Install** and **Uninstall** modes (default = Install).  
+- Uses **Configuration.xml** for install and **Uninstall.xml** for removal (packaged by default).  
+- Optionally accepts `-XMLUrl` to fetch a remote XML for either mode.  
+- Verifies the Microsoft signature on `setup.exe`.  
+- Closes Microsoft 365 apps before uninstalling and removes Proofing Tools.  
+- Cleans up after completion and returns proper exit codes for Intune.  
 
-#Key Features
+---
 
-- Optimized for Autopilot ESP: tiny package, streams bits from Microsoft CDN
-- Install and Uninstall support via a single script (Mode parameter)
-- Optional -XMLUrl to fetch XML from a remote location
-- Uses packaged Configuration.xml for install and Uninstall.xml for removal by default
-- Closes all Microsoft 365 apps before Uninstall; removes ProofingTools
-- Verifies Microsoft signature on setup.exe
-- Cleans up temp files and surfaces proper exit codes for Intune
-- Works on AMD64 and ARM64 Windows
+## Key Features
 
+- Optimized for **Autopilot ESP** (tiny package, streams bits from Microsoft CDN)  
+- A single script supports both Install/Uninstall modes via the `-Mode` parameter  
+- Optional `-XMLUrl` to fetch configuration XML files remotely  
+- Defaults to packaged `Configuration.xml` (Install) and `Uninstall.xml` (Uninstall)  
+- Verifies Microsoft’s digital signature on `setup.exe`  
+- Cleans up temporary files and ensures proper exit codes surface in Intune  
+- Works on **AMD64** and **ARM64** Windows devices  
 
+---
 
-#How It Works
+## How It Works
 
-- The Script creates a temp work folder (C:\Windows\Temp\OfficeSetup). Downloads setup.exe from the Microsoft URL: https://officecdn.microsoft.com/pr/wsus/setup.exe
-  
-- Verifies that setup.exe is signed by Microsoft.
-  
-- Selects the XML option to use (If -XMLUrl is provided, the XML is downloaded to the temp folder):
-Install mode: packaged Configuration.xml (unless -XMLUrl is provided)
-Uninstall mode: packaged Uninstall.xml (unless -XMLUrl is provided)
+1. The script creates a temporary folder: C:\Windows\Temp\OfficeSetup
+2. 2. Downloads `setup.exe` from:  
+https://officecdn.microsoft.com/pr/wsus/setup.exe
 
-- Runs: setup.exe /configure "\configuration.xml"
-  
-- Cleans up and returns the setup.exe exit code to Intune.
+3. Verifies that `setup.exe` is signed by Microsoft.  
+4. Selects an XML option:  
+- **Install mode**: uses packaged `Configuration.xml` (or downloads via `-XMLUrl`)  
+- **Uninstall mode**: uses packaged `Uninstall.xml` (or downloads via `-XMLUrl`)  
+5. Runs:  
+setup.exe /configure "configuration.xml"
 
-- Note: You don’t need to pass the XML path on the Intune command line. The script handles this internally and copies/renames the chosen XML to configuration.xml in the temp folder.
+6. Cleans up and returns the `setup.exe` exit code to Intune.  
 
+**Note:** You do not need to pass the XML path in the Intune command line. The script automatically copies/renames the chosen XML to `configuration.xml` in the temp folder.  
 
+---
 
-#Create a .intunewin package
-- Download the Intune Win32 Content Prep Tool (IntuneWinAppUtil.exe) from GitHub: https://github.com/microsoft/Microsoft-Win32-Content-Prep-Tool/raw/refs/heads/master/IntuneWinAppUtil.exe
-  
-- Place all the files in the same source folder before you run IntuneWinAppUtil:
-  Install-M365-Apps.ps1Install.xml
-  Configuration.xml
-  Uninstall.xml
-  
-- Run: IntuneWinAppUtil.exe -c "C:\SourceFolder" -s "Install-M365-Apps.ps1" -o "C:\OutputFolder"
-  
-- This generates a .intunewin package.
+## Create a .intunewin Package
 
+1. Download the [Intune Win32 Content Prep Tool](https://github.com/microsoft/Microsoft-Win32-Content-Prep-Tool/raw/refs/heads/master/IntuneWinAppUtil.exe).  
+2. Place all required files in the same source folder:  
+Install-M365-Apps.ps1
+Install.xml
+Configuration.xml
+Uninstall.xml
 
-
-#Create the Win32 App in Intune
-
-- Go to Microsoft Intune Admin Center https://intune.microsoft.com => Apps => Windows => Add.
-- Choose App type: Win32 app and Upload the .intunewin file.
-- Select the .intunewin you created.
-- Use the following install/uninstall commands:
-
-Install using packaged Configuration.xml: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Install
-
-Uninstall using packaged Uninstall.xml: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Uninstall
-
-  
-Install using remote configuration XML: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -XMLUrl "https://yourdomain.com/office/Configuration.xml"
-
-Uninstall using remote Uninstall XML: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Uninstall -XMLUrl "https://yourdomain.com/office/Uninstall.xml"
-
-
-
-#Detection rules (Custom script)
-
-- Use the PowerShell detection script (no version check; supports AMD64 + ARM64)
+3. Run the following powershell command to generate a .intunewin package:  
+.\IntuneWinAppUtil.exe -c "C:\SourceFolder" -s "Install-M365-Apps.ps1" -o "C:\OutputFolder"
 
 
+## Create a Win32 App in Intune
 
-#Logging and Troubleshooting
+1. Go to Microsoft Intune Admin Center → Apps → Windows → Add.
+2. Choose App type: Win32 app and upload the .intunewin file.
+3. Use the following install/uninstall commands:
 
-- Primary log (script): (C:\Windows\Temp\M365-Apps-Setup.log)
-- Office Click-to-Run logs: Typically under (C:\ProgramData\Microsoft\Office\ClickToRun\Log\)
-- Common causes of failure: Network egress blocked to officecdn.microsoft.com (XML URL unreachable or invalid)
+Install (using packaged Configuration.xml): powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Install
+Uninstall (using packaged Uninstall.xml): powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Uninstall
+
+Install (using remote Configuration.xml): powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -XMLUrl "https://yourdomain.com/office/Configuration.xml"
+Uninstall (using remote Uninstall.xml): powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Uninstall -XMLUrl "https://yourdomain.com/office/Uninstall.xml"
+
+
+## Detection Rules
+
+- Use the PowerShell detection script (no version check required).
+- Supports AMD64 and ARM64 architectures.
+
+
+## Logging and Troubleshooting
+
+- Script log: C:\Windows\Temp\M365-Apps-Setup.log
+- Office Click-to-Run logs: C:\ProgramData\Microsoft\Office\ClickToRun\Log
+- Common causes of failure: Network egress blocked to officecdn.microsoft.com or the provided XML URL is unreachable or invalid.
