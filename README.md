@@ -16,6 +16,7 @@ Deploy Microsoft 365 Apps for Enterprise or Microsoft 365 Apps for Business from
   - Cleans up after completion and returns proper exit codes for Intune.
 
 
+
 #Key Features
 
 Optimized for Autopilot ESP: tiny package, streams bits from Microsoft CDN
@@ -26,6 +27,7 @@ Closes all Microsoft 365 apps before Uninstall; removes ProofingTools
 Verifies Microsoft signature on setup.exe
 Cleans up temp files and surfaces proper exit codes for Intune
 Works on AMD64 and ARM64 Windows
+
 
 
 #How It Works
@@ -45,6 +47,7 @@ Uninstall mode: packaged Uninstall.xml (unless -XMLUrl is provided)
 Note: You don’t need to pass the XML path on the Intune command line. The script handles this internally and copies/renames the chosen XML to configuration.xml in the temp folder.
 
 
+
 #Create a .intunewin package
 
 - Download the Intune Win32 Content Prep Tool (IntuneWinAppUtil.exe) from GitHub: https://github.com/microsoft/Microsoft-Win32-Content-Prep-Tool/raw/refs/heads/master/IntuneWinAppUtil.exe
@@ -57,6 +60,7 @@ Note: You don’t need to pass the XML path on the Intune command line. The scri
 - Run: IntuneWinAppUtil.exe -c "C:\SourceFolder" -s "Install-M365-Apps.ps1" -o "C:\OutputFolder"
   
 - This generates a .intunewin package.
+
 
 
 #Create the Win32 App in Intune
@@ -78,6 +82,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 
 
 - Uninstall using remote Uninstall XML
   powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Uninstall -XMLUrl "https://yourdomain.com/office/Uninstall.xml"
+
 
 
 #Detection rules (Custom script)
