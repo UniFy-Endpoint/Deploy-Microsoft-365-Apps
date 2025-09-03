@@ -8,29 +8,23 @@ To create a package and call it from Intune. Place all the files in the same sou
 
 Create the .intunewin from that folder.
 
-- Run: IntuneWinAppUtil.exe -c "C:\Intune\Apps\Install-M365-Apps\AppInstaller" -s "Install-M365-Apps.ps1" -o "C:\Intune\Apps\Install-M365-Apps\Package"
+- Run: IntuneWinAppUtil.exe -c "C:\Source\AppInstaller" -s "Install-M365-Apps.ps1" -o "C:\Destination\Package"
 
 - This generates a .intunewin package.
 
-Display name: Microsoft 365 Apps for Enterprise
+Display name: Microsoft 365 Apps
 Publisher: Microsoft Corporation
 Homepage: https://www.office.com/
 
 
+Install using packaged Configuration.xml: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Install
 
-Install using packaged Configuration.xml
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Install
-
-Install using remote configuration XML
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -XMLUrl "https://yourdomain.com/office/Configuration.xml"
+Uninstall using packaged Uninstall.xml: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Uninstall
 
 
+Install using remote configuration XML: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -XMLUrl "https://yourdomain.com/office/Configuration.xml"
 
-Uninstall using packaged Uninstall.xml
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Uninstall
-
-Uninstall using remote Uninstall XML
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Uninstall -XMLUrl "https://yourdomain.com/office/Uninstall.xml
+Uninstall using remote Uninstall XML: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Uninstall -XMLUrl "https://yourdomain.com/office/Uninstall.xml"
 
 
 - Use the Detect-M365-App.ps1 as detection Script.
