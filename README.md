@@ -1,18 +1,5 @@
 # Deploy Microsoft 365 Apps with Intune (Win32 App)
 
-## Table of Contents
-- [Overview](#overview)  
-- [Important Notice](#important-notice)  
-- [Description](#description)  
-- [Key Features](#key-features)  
-- [How It Works](#how-it-works)  
-- [Create a .intunewin Package](#create-a-intunewin-package)  
-- [Create the Win32 App in Intune](#create-the-win32-app-in-intune)  
-  - [Installation](#installation)  
-  - [Uninstallation](#uninstallation)  
-- [Detection Rules](#detection-rules)  
-- [Logging and Troubleshooting](#logging-and-troubleshooting)  
-
 ---
 
 ## Overview
