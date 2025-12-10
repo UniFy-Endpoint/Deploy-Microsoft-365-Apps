@@ -63,6 +63,11 @@ Script to install or uninstall Microsoft 365 Apps as a Win32 App during Autopilo
 2. Choose App type: Win32 app and upload the .intunewin file.
 3. Use the following install/uninstall commands:
 
+## Installation Method Without -ProductID (uses XML default ProductID)
+- Install command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Install
+- Uninstall command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Uninstall
+
+
 ## Install Microsoft 365 Apps for Enterprise
 
 - Install command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Install -ProductID O365ProPlusRetail
@@ -73,11 +78,6 @@ Script to install or uninstall Microsoft 365 Apps as a Win32 App during Autopilo
  
 - Install command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Install -ProductID O365BusinessRetail
 - Uninstall command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Uninstall -ProductID O365BusinessRetail
-
-
-## Installation Method Without -ProductID (uses XML default)
-- Install command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Install
-- Uninstall command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Uninstall
 
 ---
 
