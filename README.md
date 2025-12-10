@@ -4,12 +4,7 @@
 
 ## Overview
 
-Deploy **Microsoft 365 Apps for Enterprise** or **Microsoft 365 Apps for Business** from **Intune** as a Win32 App (optimized for Autopilot ESP).  
-
-You do **not** need to package the script and the `.xml` configuration files into an `.intunewin` file every time.  
-
-A new `.intunewin` file should only be created if:  
-- Modifications are made to the `.xml` files, or the Script.
+Deploy **Microsoft 365 Apps for Enterprise** or **Microsoft 365 Apps for Business** from **Intune** as a Win32 App (optimized for Autopilot ESP).
 
 ---
 
