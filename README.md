@@ -16,7 +16,7 @@ It is recommended to **validate and test** both the script and the configuration
 
 ## Description
 
-Script to install or uninstall Microsoft 365 Apps as a Win32 App during Autopilot by downloading the latest Office setup exe from Microsoft CDN url and running Setup.exe with provided configuration.xml or uninstall.xml file.
+Script to install or uninstall Microsoft 365 Apps as a Win32 App during Autopilot by downloading the latest Office setup exe from Microsoft CDN url and running **Setup.exe** with provided **configuration.xml** or **uninstall.xml** file.
 
 ---
 
