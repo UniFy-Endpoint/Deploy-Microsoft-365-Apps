@@ -10,7 +10,7 @@ Deploy **Microsoft 365 Apps for Enterprise** or **Microsoft 365 Apps for Busines
 
 ## Important Notice
 
-It is strongly recommended to **validate and test** both the script and the configuration in a **controlled test environment** before deploying in production.  
+It is recommended to **validate and test** both the script and the configuration in a **controlled test environment** before deploying in production.  
 
 ---
 
