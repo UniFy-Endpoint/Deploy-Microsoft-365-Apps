@@ -16,42 +16,31 @@ It is recommended to **validate and test** both the script and the configuration
 
 ## Description
 
-This Script:  
-- Downloads the latest Office Click-to-Run `setup.exe` version from the Microsoft CDN (tiny package).
-- Supports both O365ProPlusRetail and O365BusinessRetail via parameter.
-- Detects system architecture (AMD64 or ARM64).  
-- Supports **Install** and **Uninstall** modes.  
-- Uses **Configuration.xml** for install and **Uninstall.xml** for removal (packaged by default).  
-- Proper logging to Intune Management Extension logs folder  
-- Verifies the Microsoft signature on `setup.exe`.  
-- Complete installation before exiting to ensure Microsoft 365 Apps are available at user login.
-- Handles ClickToRunSvc to ensure clean exit for Intune detection 
-- Cleans up after completion and returns proper exit codes for Intune.  
+Script to install or uninstall Microsoft 365 Apps as a Win32 App during Autopilot by downloading the latest Office setup exe from Microsoft CDN url and running Setup.exe with provided configuration.xml or uninstall.xml file.
 
 ---
 
 ## Key Features
 
 - Optimized for **Autopilot ESP** (tiny package, streams bits from Microsoft CDN)  
-- A single script supports both Install/Uninstall modes via the `-Mode` parameter  
-- Optional `-XMLUrl` to fetch configuration XML files remotely  
-- Defaults to packaged `Configuration.xml` (Install) and `Uninstall.xml` (Uninstall)  
+- A single script supports **Install** and **Uninstall** modes via the `-Mode` parameter  
 - Verifies Microsoft’s digital signature on `setup.exe`  
-- Cleans up temporary files and ensures proper exit codes surface in Intune  
-- Works on **AMD64** and **ARM64** Windows devices  
+- Supports both **O365ProPlusRetail** and **O365BusinessRetail** via parameter
+- Detects and works **AMD64** **ARM64** Windows system architecture
+- Uses **Configuration.xml** for install and **Uninstall.xml**
+- Cleans up temporary files and ensures proper exit codes surface in Intune
 
 ---
 
 ## How It Works
 
-1. The script creates a temporary folder: C:\Windows\Temp\OfficeSetup
-2. Downloads `setup.exe` from: https://officecdn.microsoft.com/pr/wsus/setup.exe
+1. The script creates a temporary folder: `C:\Windows\Temp\OfficeSetup`
+2. Downloads `setup.exe` from: `https://officecdn.microsoft.com/pr/wsus/setup.exe`
 3. Verifies that `setup.exe` is signed by Microsoft.  
 4. Start the installation on System Contex.
 5. Cleans up temporary files and ensures proper exit codes after installation cpleted.  
-
-    
-**Note:** You do not need to pass the XML path in the Intune command line. The script automatically copies/renames the chosen XML to `configuration.xml` to the temp folder C:\Windows\Temp\OfficeSetup.  
+  
+**Note:** You do not need to pass the XML path in the Intune command line. The script automatically copies/renames the chosen XML to `configuration.xml` to the temp folder `C:\Windows\Temp\OfficeSetup`
 
 ---
 
@@ -73,8 +62,6 @@ This Script:
 1. Go to Microsoft Intune Admin Center → Apps → Windows → Add.
 2. Choose App type: Win32 app and upload the .intunewin file.
 3. Use the following install/uninstall commands:
-
---- 
 
 ## Install Microsoft 365 Apps for Enterprise
 
