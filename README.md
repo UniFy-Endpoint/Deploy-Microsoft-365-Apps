@@ -84,7 +84,6 @@ Script to install or uninstall Microsoft 365 Apps as a Win32 App during Autopilo
 ## Detection Rules
 
 - Use the PowerShell detection script **Detect-Microsoft-365-Apps.ps1**
-- Supports AMD64 and ARM64 architectures.
 
 ---
 
