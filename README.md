@@ -6,11 +6,10 @@
 
 Deploy **Microsoft 365 Apps for Enterprise** or **Microsoft 365 Apps for Business** from **Intune** as a Win32 App (optimized for Autopilot ESP).  
 
-You do **not** need to package the script and the `.xml` configuration files into an `.intunewin` file every time. The file located in the **Package** folder is already packaged and can be used directly as a Win32 App to configure and install Microsoft 365 Apps.  
+You do **not** need to package the script and the `.xml` configuration files into an `.intunewin` file every time.  
 
 A new `.intunewin` file should only be created if:  
-- Modifications are made to the `.xml` files, or  
-- A new configuration file is required.  
+- Modifications are made to the `.xml` files, or the Script.
 
 ---
 
@@ -23,12 +22,15 @@ It is strongly recommended to **validate and test** both the script and the conf
 ## Description
 
 This Script:  
-- Downloads the latest Office Click-to-Run `setup.exe` version from the Microsoft CDN (tiny package).  
-- Supports **Install** and **Uninstall** modes (default = Install).  
+- Downloads the latest Office Click-to-Run `setup.exe` version from the Microsoft CDN (tiny package).
+- Supports both O365ProPlusRetail and O365BusinessRetail via parameter.
+- Detects system architecture (AMD64 or ARM64).  
+- Supports **Install** and **Uninstall** modes.  
 - Uses **Configuration.xml** for install and **Uninstall.xml** for removal (packaged by default).  
-- Optionally accepts `-XMLUrl` to fetch a remote XML for either mode.  
+- Proper logging to Intune Management Extension logs folder  
 - Verifies the Microsoft signature on `setup.exe`.  
-- Closes Microsoft 365 apps before uninstalling and removes Proofing Tools.  
+- Complete installation before exiting to ensure Microsoft 365 Apps are available at user login.
+- Handles ClickToRunSvc to ensure clean exit for Intune detection 
 - Cleans up after completion and returns proper exit codes for Intune.  
 
 ---
@@ -50,16 +52,15 @@ This Script:
 1. The script creates a temporary folder: C:\Windows\Temp\OfficeSetup
 2. Downloads `setup.exe` from: https://officecdn.microsoft.com/pr/wsus/setup.exe
 3. Verifies that `setup.exe` is signed by Microsoft.  
-4. Selects an XML option:  
-- **Install mode**: uses packaged `Configuration.xml` (or downloads via `-XMLUrl`)  
-- **Uninstall mode**: uses packaged `Uninstall.xml` (or downloads via `-XMLUrl`)  
-5. Cleans up and returns the `setup.exe` exit code to Intune.  
+4. Start the installation on System Contex.
+5. Cleans up temporary files and ensures proper exit codes after installation cpleted.  
 
-**Note:** You do not need to pass the XML path in the Intune command line. The script automatically copies/renames the chosen XML to `configuration.xml` in the temp folder.  
+    
+**Note:** You do not need to pass the XML path in the Intune command line. The script automatically copies/renames the chosen XML to `configuration.xml` to the temp folder C:\Windows\Temp\OfficeSetup.  
 
 ---
 
-## Create a .intunewin Package (Optional)
+## Create a .intunewin Package
 
 1. Download the [Intune Win32 Content Prep Tool](https://github.com/microsoft/Microsoft-Win32-Content-Prep-Tool/raw/refs/heads/master/IntuneWinAppUtil.exe).  
 2. Place all required files in the same source folder:  
@@ -78,29 +79,34 @@ This Script:
 2. Choose App type: Win32 app and upload the .intunewin file.
 3. Use the following install/uninstall commands:
 
-## Installation Method using the .xml files include in the package
+--- 
 
-- Install (using packaged Configuration.xml): powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Install
-- Uninstall (using packaged Uninstall.xml): powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Uninstall
+## Install Microsoft 365 Apps for Enterprise
 
----
+- Install command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Install -ProductID O365ProPlusRetail
+- Uninstall command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Uninstall -ProductID O365ProPlusRetail
 
-## Installation Method using remote .xml files (Optional)
 
-- Install (using remote Configuration.xml): powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -XMLUrl "https://yourdomain.com/office/Configuration.xml"
-- Uninstall (using remote Uninstall.xml): powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-M365-Apps.ps1 -Mode Uninstall -XMLUrl "https://yourdomain.com/office/Uninstall.xml"
+ ## Install Microsoft 365 Apps for Business
+ 
+- Install command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Install -ProductID O365BusinessRetail
+- Uninstall command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Uninstall -ProductID O365BusinessRetail
+
+
+## Installation Method Without -ProductID (uses XML default)
+- Install command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Install
+- Uninstall command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Uninstall
 
 ---
 
 ## Detection Rules
 
-- Use the PowerShell detection script (no version check required).
+- Use the PowerShell detection script **Detect-Microsoft-365-Apps.ps1**
 - Supports AMD64 and ARM64 architectures.
 
 ---
 
 ## Logging and Troubleshooting
 
-- Script logs: C:\Windows\Temp\M365-Apps-Setup.log
-- Office Click-to-Run logs: C:\ProgramData\Microsoft\Office\ClickToRun\Log
-- Common causes of failure: Network egress blocked to officecdn.microsoft.com or the provided XML URL is unreachable or invalid.
+- Script logs: Microsoft\IntuneManagementExtension\Logs\Microsoft-365-Apps-Setup.log"
+
