@@ -1,3 +1,5 @@
+[![Download Latest Release](https://img.shields.io/github/v/release/UniFy-Endpoint/Deploy-Microsoft-365-Apps?label=Download%20Latest&style=for-the-badge&logo=github)](https://github.com/UniFy-Endpoint/Deploy-Microsoft-365-Apps/releases/latest)
+
 # Deploy Microsoft 365 Apps with Intune (Win32 App)
 
 ---
@@ -90,4 +92,3 @@ Script to install or uninstall Microsoft 365 Apps as a Win32 App during Autopilo
 ## Logging and Troubleshooting
 
 - Script logs: Microsoft\IntuneManagementExtension\Logs\Microsoft-365-Apps-Setup.log"
-
