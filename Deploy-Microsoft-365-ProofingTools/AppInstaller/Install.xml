@@ -1,0 +1,11 @@
+<Configuration>
+  <Add Version="MatchInstalled" MigrateArch="TRUE">
+    <Product ID="ProofingTools">
+      <Language ID="nl-nl" />
+    </Product>
+  </Add>
+  <Display Level="None" AcceptEULA="TRUE" />
+  <Property Name="FORCEAPPSHUTDOWN" Value="TRUE" />
+  <Property Name="SharedComputerLicensing" Value="1" />
+  <Updates Enabled="TRUE" />
+</Configuration>
