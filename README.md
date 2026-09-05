@@ -1,94 +1,114 @@
-[![Download Latest Release](https://img.shields.io/github/v/release/UniFy-Endpoint/Deploy-Microsoft-365-Apps?label=Download%20Latest&style=for-the-badge&logo=github)](https://github.com/UniFy-Endpoint/Deploy-Microsoft-365-Apps/releases/latest)
+# Deploy Microsoft 365 Apps with Intune
 
-# Deploy Microsoft 365 Apps with Intune (Win32 App)
+Deploy **Microsoft 365 Apps for Enterprise** or **Microsoft 365 Apps for Business** from
+Intune as a Win32 app, optimised for Autopilot ESP — packaged either as a plain Win32 script
+package **or** with **PSAppDeployToolkit**, from the same installer script and the same XML
+files. Language packs and proofing tools ship as separate apps in the same repository.
 
----
+> **Validate and test** both the scripts and the configuration in a controlled test
+> environment before deploying to production — see the
+> [validation checklist](docs/TESTING.md).
 
-## Overview
+## How it works
 
-Deploy **Microsoft 365 Apps for Enterprise** or **Microsoft 365 Apps for Business** from **Intune** as a Win32 App (optimized for Autopilot ESP).
+The installer downloads the latest Office Deployment Tool from Microsoft's evergreen CDN on
+every run and drives `setup.exe` with the supplied `Configuration.xml` or `Uninstall.xml`, so
+the package itself stays tiny and never carries a stale Office build. Office is installed in
+the **Dutch and English UI languages alongside the OS display language**, so a device keeps
+working whichever language Windows is running in.
 
----
+- Optimised for **Autopilot ESP** — a small package that streams the bits from Microsoft's CDN
+- One script handles **Install**, **Uninstall** and **Repair** through the `-Mode` parameter
+- Verifies Microsoft's Authenticode signature on `setup.exe` before running it
+- Supports **O365ProPlusRetail** and **O365BusinessRetail** through `-ProductID`
+- Removes **only** the product it was told to remove; other Office versions are untouched
+- Runs 64-bit even though the Intune Management Extension is a 32-bit host
+- Waits for the Click-to-Run engine to go idle, so an uninstall issued straight after an
+  install works **without a reboot**
+- Detection scripts match one **exact** product ID and verify the languages actually landed
+- Packages with **PSAppDeployToolkit v4** for a user-facing close-apps countdown, or as a
+  plain Win32 script package — your choice, same source files
 
-## Important Notice
+> **ARM64.** `Configuration.xml` sets `OfficeClientEdition="64"`. On an ARM64 device the
+> Office Deployment Tool serves the ARM64 build automatically, so one package covers AMD64
+> and ARM64.
 
-It is recommended to **validate and test** both the script and the configuration in a **controlled test environment** before deploying in production.  
+## Repository layout
 
----
+| App folder | Installer script | Detection script | Packaging |
+|---|---|---|---|
+| `Microsoft-365-Apps-Business` | `Install-Microsoft-365-Apps_v2.5.ps1` | `Detect-Microsoft-365-Apps_v2.0.ps1` | PSADT |
+| `Microsoft-365-Apps-Enterprise` | `Install-Microsoft-365-Apps_v2.5.ps1` | `Detect-Microsoft-365-Apps_v2.0.ps1` | PSADT |
+| `Deploy-Microsoft-365-LanguagePacks` | `Install-LanguagePacks_v3.0.ps1` | `Detect-LanguagePacks_v3.0.ps1` | Win32 script |
+| `Deploy-Microsoft-365-ProofingTools` | `Install-ProofingTools_v3.0.ps1` | `Detect-ProofingTools_v3.0.ps1` | Win32 script |
 
-## Description
+`Install-Tools\` holds workstation-only tooling (never deployed) — see the
+[tooling reference](docs/TOOLING.md).
 
-Script to install or uninstall Microsoft 365 Apps as a Win32 App during Autopilot by downloading the latest Office setup exe from Microsoft CDN url and running **Setup.exe** with provided **configuration.xml** or **uninstall.xml** file.
+## Prerequisites
 
----
+- Windows PowerShell 5.1 or PowerShell 7+ on the packaging workstation. No admin rights
+  needed to build; admin **is** needed to run an installer manually.
+- Internet access on the first run, to download PSAppDeployToolkit and IntuneWinAppUtil.exe
+  (cached under `.tools\` afterwards — see Quick start).
+- A test device you are willing to reset, for the [validation checklist](docs/TESTING.md).
 
-## Key Features
+> **Keep the repo path short.** PSADT's `Strings` and `lib` trees are deep and already reach
+> ~200 characters from the repo root. Past MAX_PATH the toolkit's DLLs fail to load and every
+> deployment returns exit code 60008 — see [Troubleshooting](docs/TROUBLESHOOTING.md).
 
-- Optimized for **Autopilot ESP** (tiny package, streams bits from Microsoft CDN)  
-- A single script supports **Install** and **Uninstall** modes via the `-Mode` parameter  
-- Verifies Microsoft’s digital signature on `setup.exe`  
-- Supports both **O365ProPlusRetail** and **O365BusinessRetail** via parameter
-- Detects and works **AMD64** **ARM64** Windows system architecture
-- Uses **Configuration.xml** for install and **Uninstall.xml**
-- Cleans up temporary files and ensures proper exit codes surface in Intune
+## Quick start
 
----
+After cloning, one command fetches the tools, assembles the packages and builds the
+`.intunewin` files:
 
-## How It Works
+```powershell
+cd Install-Tools
+.\Build-PSADTPackage.ps1 -Restore -BuildIntuneWin
+```
 
-1. The script creates a temporary folder: `C:\Windows\Temp\OfficeSetup`
-2. Downloads `setup.exe` from: `https://officecdn.microsoft.com/pr/wsus/setup.exe`
-3. Verifies that `setup.exe` is signed by Microsoft.  
-4. Start the installation on System Contex.
-5. Cleans up temporary files and ensures proper exit codes after installation cpleted.  
-  
-**Note:** You do not need to pass the XML path in the Intune command line. The script automatically copies/renames the chosen XML to `configuration.xml` to the temp folder `C:\Windows\Temp\OfficeSetup`
+That downloads **PSAppDeployToolkit** and **IntuneWinAppUtil.exe** (verifying its Microsoft
+signature), stages the toolkit into each package root, validates every package, and writes
+`<App>\Package\Invoke-AppDeployToolkit.intunewin`.
 
----
+Then upload using the settings in [Intune setup](docs/INTUNE-SETUP.md), and work through the
+[validation checklist](docs/TESTING.md) on a test device before broad deployment.
 
-## Create a .intunewin Package
+Later runs need no switches, and nothing is downloaded again:
 
-1. Download the [Intune Win32 Content Prep Tool](https://github.com/microsoft/Microsoft-Win32-Content-Prep-Tool/raw/refs/heads/master/IntuneWinAppUtil.exe).  
-2. Place all required files in the same source folder:  
-- Install-M365-Apps.ps1
-- Configuration.xml
-- Uninstall.xml
+```powershell
+.\Build-PSADTPackage.ps1                      # validate only, read-only
+.\Build-PSADTPackage.ps1 -BuildIntuneWin      # validate and rebuild the .intunewin files
+.\Build-PSADTPackage.ps1 -Restore -Force      # move the packages onto a new PSADT version
+```
 
-3. Run the following powershell command to generate a .intunewin package:  
-.\IntuneWinAppUtil.exe -c "C:\SourceFolder" -s "Install-M365-Apps.ps1" -o "C:\OutputFolder"
+Air-gapped workstation:
 
----
+```powershell
+.\Build-PSADTPackage.ps1 -Restore -BuildIntuneWin -NoDownload `
+    -ToolsPath D:\Offline\Tools -IntuneWinAppUtilPath D:\Offline\IntuneWinAppUtil.exe
+```
 
-## Create a Win32 App in Intune
+> **What is not in this repository.** The PSAppDeployToolkit module (~19 MB per package) and
+> every `.intunewin` are gitignored build output — `-Restore` / `-BuildIntuneWin` regenerate
+> them locally. That's why a fresh clone is under 1 MB, and why there's nothing to commit
+> after a rebuild.
 
-1. Go to Microsoft Intune Admin Center → Apps → Windows → Add.
-2. Choose App type: Win32 app and upload the .intunewin file.
-3. Use the following install/uninstall commands:
+## Documentation
 
-## Installation Method Without -ProductID (uses XML default ProductID)
-- Install command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Install
-- Uninstall command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Uninstall
+| Page | What's in it |
+|---|---|
+| [Packaging](docs/PACKAGING.md) | Package folder layout, building a PSADT package by hand, converting to/from a plain Win32 script package, creating the `.intunewin` |
+| [Intune setup](docs/INTUNE-SETUP.md) | Exact install/uninstall commands, detection rule, return codes, and what the wrapper runs underneath |
+| [Testing](docs/TESTING.md) | The validation checklist to run on a test device before production rollout |
+| [Troubleshooting](docs/TROUBLESHOOTING.md) | Log locations, manual test commands, exit codes, and fixes for the failures you'll actually hit |
+| [Tooling reference](docs/TOOLING.md) | What `Build-PSADTPackage.ps1` checks and why, plus notes on the wrapper template |
 
+## Support files and branding
 
-## Install Microsoft 365 Apps for Enterprise
-
-- Install command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Install -ProductID O365ProPlusRetail
-- Uninstall command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Uninstall -ProductID O365ProPlusRetail
-
-
- ## Install Microsoft 365 Apps for Business
- 
-- Install command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Install -ProductID O365BusinessRetail
-- Uninstall command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Install-Microsoft-365-Apps.ps1 -Mode Uninstall -ProductID O365BusinessRetail
-
----
-
-## Detection Rules
-
-- Use the PowerShell detection script **Detect-Microsoft-365-Apps.ps1**
-
----
-
-## Logging and Troubleshooting
-
-- Script logs: Microsoft\IntuneManagementExtension\Logs\Microsoft-365-Apps-Setup.log"
+`AppInstaller\SupportFiles\` (e.g. `AppLogo.png`) isn't read by any script — it's a place to
+keep a reference copy of the icon you upload by hand to Intune's **App information → Logo**
+field. To change what a PSADT dialog itself shows, overwrite the image content of
+`PSAppDeployToolkit\Assets\AppIcon.png` / `Banner.Classic.png` under the same filenames —
+**never** edit paths in `PSAppDeployToolkit\Config\config.psd1`, which is Authenticode-signed
+and will refuse to load if changed. Details in [Packaging](docs/PACKAGING.md#folder-layout).

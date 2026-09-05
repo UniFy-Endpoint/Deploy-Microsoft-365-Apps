@@ -1,0 +1,21 @@
+# Downloaded third-party tools. Fetched on demand by Install-Tools\Build-PSADTPackage.ps1
+# with -Restore / -BuildIntuneWin. Never commit these.
+.tools/
+
+# The PSAppDeployToolkit module staged into each package root. About 19 MB per package.
+# Recreate it at any time with:  .\Install-Tools\Build-PSADTPackage.ps1 -Restore
+*/AppInstaller/PSAppDeployToolkit/
+*/AppInstaller/PSAppDeployToolkit.Extensions/
+*/AppInstaller/Invoke-AppDeployToolkit.exe
+
+# Build output. Rebuild with -BuildIntuneWin.
+*/Package/*.intunewin
+
+# Keep the empty folders so the layout survives a clone.
+!*/Package/.gitkeep
+!*/AppInstaller/SupportFiles/.gitkeep
+
+# Windows / editor noise
+Thumbs.db
+desktop.ini
+.vscode/

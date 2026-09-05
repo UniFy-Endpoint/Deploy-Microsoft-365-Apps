@@ -1,8 +1,8 @@
 <Configuration ID="f896df80-ee13-4088-9462-0250188651fa">
   <Add OfficeClientEdition="64" Channel="MonthlyEnterprise" MigrateArch="TRUE" >
     <Product ID="O365BusinessRetail">
-      <Language ID="MatchOS" />
-      <Language ID="nl-nl" Fallback="en-us" />
+      <Language ID="MatchOS" Fallback="en-us" />
+      <Language ID="nl-nl" />
       <Language ID="en-us" />
       <ExcludeApp ID="Access" />
       <ExcludeApp ID="Groove" />
@@ -13,7 +13,6 @@
     </Product>
   </Add>
   <Property Name="SharedComputerLicensing" Value="0"/>
-  <Property Name="FORCEAPPSHUTDOWN" Value="TRUE" />
   <Property Name="DeviceBasedLicensing" Value="0" />
   <Property Name="SCLCacheOverride" Value="0" />
   <Property Name="PinIconsToTaskbar" Value="FALSE" />
