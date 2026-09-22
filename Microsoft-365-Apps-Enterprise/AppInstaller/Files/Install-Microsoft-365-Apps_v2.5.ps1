@@ -116,6 +116,12 @@ $SetupFilePath = Join-Path -Path $SetupFolder -ChildPath "setup.exe"
 $ClickToRunServiceName = "ClickToRunSvc"
 $ScriptVersion = "2.5"
 
+# setup.exe returns these when the change applied but a restart is recommended. Not a failure -
+# and this deployment must never hand one of these back to Intune, or a device gated on the
+# Autopilot Enrollment Status Page's Device Setup phase gets restarted and stranded on
+# defaultuser0 before Windows Hello/OOBE ever runs.
+$OfficeRebootExitCodes = @(1641, 3010)
+
 # Registry paths are relative to the 64-bit HKLM hive, opened explicitly below.
 $C2RConfigKey = "SOFTWARE\Microsoft\Office\ClickToRun\Configuration"
 $C2RProductKey = "SOFTWARE\Microsoft\Office\ClickToRun\ProductReleaseIDs"
@@ -786,6 +792,11 @@ try {
 
             Write-LogEntry -Value "Office setup.exe completed with exit code: $ExitCode" -Severity 1
 
+            if ($OfficeRebootExitCodes -contains $ExitCode) {
+                Write-LogEntry -Value "setup.exe returned exit code [$ExitCode] (reboot recommended, not a failure). Treating as success and continuing without restarting the device." -Severity 2
+                $ExitCode = 0
+            }
+
             # Post-installation verification
             if ($ExitCode -eq 0) {
                 $InstallVerified = Wait-OfficeInstallationComplete -TimeoutSeconds 120 -CheckIntervalSeconds 5
@@ -860,6 +871,11 @@ try {
                 $ExitCode = Invoke-OfficeSetup -ConfigPath $UninstallConfigPath
 
                 Write-LogEntry -Value "Office uninstall completed with exit code: $ExitCode" -Severity 1
+
+                if ($OfficeRebootExitCodes -contains $ExitCode) {
+                    Write-LogEntry -Value "setup.exe returned exit code [$ExitCode] (reboot recommended, not a failure). Treating as success and continuing without restarting the device." -Severity 2
+                    $ExitCode = 0
+                }
 
                 # Verify uninstall result
                 if ($ExitCode -eq 0 -or $ExitCode -eq -1) {

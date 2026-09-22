@@ -90,6 +90,11 @@ $SetupEverGreenURL = "https://officecdn.microsoft.com/pr/wsus/setup.exe"
 $SetupFilePath = Join-Path -Path $SetupFolder -ChildPath "setup.exe"
 $ScriptVersion = "3.0"
 
+# setup.exe returns these when the change applied but a restart is recommended. Never treat
+# them as failure, and never let $ExitCode below become one of them - this deployment must
+# not restart the device (Autopilot ESP breaks if it does).
+$OfficeRebootExitCodes = @(1641, 3010)
+
 # Registry paths are relative to the 64-bit HKLM hive, opened explicitly below.
 $C2RConfigKey = "SOFTWARE\Microsoft\Office\ClickToRun\Configuration"
 $C2RProductKey = "SOFTWARE\Microsoft\Office\ClickToRun\ProductReleaseIDs"
@@ -559,11 +564,14 @@ try {
     $OfficeInstall = Start-Process -FilePath $SetupFilePath -ArgumentList "/configure `"$StagedXmlPath`"" -NoNewWindow -Wait -PassThru -ErrorAction Stop
     Write-LogEntry -Value "Setup.exe completed with exit code: $($OfficeInstall.ExitCode)" -Severity 1
 
-    if ($OfficeInstall.ExitCode -ne 0) {
+    if ($OfficeInstall.ExitCode -ne 0 -and $OfficeRebootExitCodes -notcontains $OfficeInstall.ExitCode) {
         Write-LogEntry -Value "proofing tools '$LanguageID' $Mode failed with exit code: $($OfficeInstall.ExitCode)" -Severity 3
         $ExitCode = 1
     }
     else {
+        if ($OfficeRebootExitCodes -contains $OfficeInstall.ExitCode) {
+            Write-LogEntry -Value "Setup.exe returned exit code [$($OfficeInstall.ExitCode)] (reboot recommended, not a failure). Continuing verification and reporting success to Intune without restarting the device." -Severity 2
+        }
         Write-LogEntry -Value "Setup.exe initiated successfully. Waiting for the $Mode to complete..." -Severity 1
 
         # This is the call that was broken in 2.1 (Test-ProofingToolsInstallation did not exist).

@@ -24,9 +24,6 @@ Silent automatically when no user is logged on or the device is in OOBE/Autopilo
 Microsoft 365 Apps product to install/uninstall. Defaults to O365BusinessRetail for this
 package. Set to O365ProPlusRetail to reuse the same package for Enterprise.
 
-.PARAMETER SuppressRebootPassThru
-Suppresses the 3010 return code from being passed back to the parent process.
-
 .PARAMETER TerminalServerMode
 Changes to "user install mode" for RDSH/Citrix servers.
 
@@ -70,9 +67,6 @@ param
     [Parameter(Mandatory = $false)]
     [ValidateSet('O365BusinessRetail', 'O365ProPlusRetail')]
     [System.String]$ProductID = 'O365BusinessRetail',
-
-    [Parameter(Mandatory = $false)]
-    [System.Management.Automation.SwitchParameter]$SuppressRebootPassThru,
 
     [Parameter(Mandatory = $false)]
     [System.Management.Automation.SwitchParameter]$TerminalServerMode,
@@ -220,8 +214,14 @@ function Resolve-M365ExitCode
     }
     if ($adtSession.AppRebootExitCodes -contains $ExitCode)
     {
-        Write-ADTLogEntry -Message "A reboot is required to finish the $($adtSession.DeploymentType)."
-        Close-ADTSession -ExitCode $ExitCode
+        # Deliberately NOT passed through as-is. This app is gated on the Autopilot Enrollment
+        # Status Page's Device Setup phase: Intune's Win32 app agent treats 1641/3010 as
+        # "restart the device now" (deviceRestartBehavior = basedOnReturnCode), and a restart
+        # mid-Device-Setup strands the device on the temporary defaultuser0 profile and breaks
+        # provisioning. Office does not need this reboot to be usable - any file still in use
+        # during setup finishes replacing itself at the user's next normal sign-in/reboot.
+        Write-ADTLogEntry -Message "The Office Deployment Tool returned exit code [$ExitCode] (reboot recommended). Suppressing the reboot-triggering exit code and reporting success to Intune instead - see comment above."
+        Close-ADTSession -ExitCode 0
     }
     Write-ADTLogEntry -Message "Microsoft 365 Apps $($adtSession.DeploymentType) failed with exit code [$ExitCode]." -Severity 3
     Close-ADTSession -ExitCode $ExitCode
